@@ -1,22 +1,55 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+
+void table_init(int *table, size_t width, size_t height);
+void table_print(const int *table, size_t width, size_t height);
+
 
 int main(){
     
-    const int MAX = 11;
-    //изначально я хотел создать массивы, но потом их закоментировал так как понел что они не нужны, но вопрос остался (вопрос находится после массивов)
-    //int horizontal[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // если пишу int horizontal[MAX] то программа не компилируется
-    //int vertical[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};   // если пишу int horizontal[MAX] то программа не компилируется
-    
-    printf("\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\n");
-    for(unsigned int vertical = 1; vertical < MAX; vertical++){
-        printf("%d\t", vertical);
-        for(unsigned int horizontal = 1; horizontal < MAX; horizontal++){
-            printf("%d\t", vertical * horizontal);
-        }
-        printf("\n");
+    const size_t TABLE_SIZE = (size_t)100;
+    int *multiplication_table = (int *)malloc(sizeof(int) * TABLE_SIZE);
+    if(NULL == multiplication_table){
+        perror("malloc");
+        abort();
     }
     
+    table_init(multiplication_table, TABLE_SIZE / 10, TABLE_SIZE / 10);
+    table_print((const int *)multiplication_table, TABLE_SIZE / 10, TABLE_SIZE / 10);
     
-
+    free(multiplication_table);
+    multiplication_table = NULL;
     return 0;
 }
+
+
+void table_init(int *table, size_t width, size_t height){
+    if (NULL == table){
+        fprintf(stderr, "Null pointer int %s: %d\n", __FILE__, __LINE__ -1);
+        abort();
+    }
+    for(size_t i = 0; i < height; i++){
+        for(size_t j = 0; j < width; j++){
+            table[i * width + j] = (i + 1) * (j + 1);
+        }
+    }
+}
+void table_print(const int *table, size_t width, size_t height){
+    if (NULL == table){
+        fprintf(stderr, "Null pointer int %s: %d\n", __FILE__, __LINE__ -1);
+        abort();
+    }
+    for(size_t i = 0; i < height; i++){
+        for(size_t j = 0; j < width; j++){
+            printf ("%d\t", table[i * width + j]);
+        }
+        printf("\n");
+    }    
+}
+
+
+
+
+
+
