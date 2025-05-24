@@ -1,5 +1,44 @@
 #include <stdbool.h>
 #include <iso646.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t str_size(const char *str){
+    /*
+    * @brief Calculates the length of a null-terminated C string.
+    *
+    * This function returns the number of characters in the input string,
+    * excluding the null terminator ('\0').
+    *
+    * If the input pointer is NULL, the function prints an error message
+    * to stderr indicating the file and line where the null pointer was detected,
+    * and then terminates the program using abort().
+    *
+    * @param str A pointer to a null-terminated C string.
+    *
+    * @return The number of characters in the string (not including the null terminator).
+    *
+    * @note This function is designed for ASCII or UTF-8 strings where characters are
+    *       represented by single bytes. It does not support wide or multibyte characters.
+    *
+    * @warning Passing a NULL pointer will cause the program to terminate.
+    *
+    * @examples
+    * str_size("Hello")         -> 5
+    * str_size("")              -> 0
+    * str_size("OpenAI GPT-4")  -> 12
+    * str_size(NULL)            -> Program aborts with an error message
+    */
+    if (NULL == str){
+        fprintf(stderr, "NULL pointer at %s: %d\n", __FILE__, __LINE__ - 1);
+        abort();
+    }
+    size_t size = 0;
+    for(size_t i = 0; str[i] != '\0'; i++){
+        size++;
+    }
+    return size;
+}
 
 
 char to_lower(char ch){

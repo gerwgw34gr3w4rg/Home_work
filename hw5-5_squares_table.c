@@ -1,27 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 int main(){
-    const int STOP = 99; // table of squares of numbers up to 99
-    int *arr = (int *)malloc(sizeof(int) * STOP + 1);
-    if(NULL == arr){
-        printf("Error malloc");
+    const size_t LIMIT = 99;
+    const size_t TABLE_SIZE = 81; // table of squares of numbers from 11 to 99
+    int *squares_table = (int *)malloc(sizeof(int) * TABLE_SIZE);
+    if(NULL == squares_table){
+        perror("Error malloc");
         abort();
     }
-    int i = 0;
-    while(i <= STOP){
-        arr[i] = i * i;
+    size_t i = 11;
+    size_t j = 0;
+    while(i <= LIMIT){
+        if(i % 10 == 0){
+            i++;
+            continue;
+        }
+        squares_table[j] = i * i;
+        j++;
         i++;
     }
-    i = 0;
-    while(i <= STOP){
-        printf("%d\t", arr[i]);
-        i++;
-        if(i % 10 == 0){
+    j = 0;
+    while(j < TABLE_SIZE){
+        printf("%d\t", squares_table[j]);
+        j++;
+        if(j % 9 == 0){
             printf("\n");
         }
     }
-    free(arr);
     printf("\n");
+    free(squares_table);
+    squares_table = NULL;
     return 0;
 }
