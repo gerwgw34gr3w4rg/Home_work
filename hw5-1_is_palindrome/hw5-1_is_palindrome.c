@@ -117,10 +117,11 @@ bool is_palindrome(const char *str){
     * - An empty string is considered a not valid palindrome.
     *
     * Example cases:
-    *   is_palindrome("A Santa at NASA")           -> true
-    *   is_palindrome("Madam, I'm Adam!")          -> true
-    *   is_palindrome("8975798")                   -> false
-    *   is_palindrome("Madam Palindrome")          -> false
+    *   is_palindrome("A Santa at NASA")            -> true
+    *   is_palindrome("Madam, I'm Adam!")           -> true
+    *   is_palindrome("8975798")                    -> false
+    *   is_palindrome("Madam Palindrome")           -> false
+    *   is_palindrome("")                           -> false
     *
     * @param str A null-terminated C string (const char *) to be evaluated.
     *            The input is assumed to be no longer than 100 characters.
@@ -128,5 +129,37 @@ bool is_palindrome(const char *str){
     * @return true if the input string is a palindrome under the rules above,
     *         false otherwise.
     */
-    return true;
+    if(NULL == str){
+        fprintf(stderr, "Null pointer at %s: %d\n", __FILE__, __LINE__, -1);
+        abort();
+    }
+    size_t left = (size_t)0;
+    size_t right = str_size(str);
+    if((size_t)0 == right){
+        return false;
+    }
+    if(1 == right and is_alpha(str[0])){
+        return true;
+    }
+    right--;
+    bool is_letter_enconter = false;
+    while(left < right){
+        while(left < right and not is_alpha(str[left])){
+            left++;
+        }
+        while(left < right and not is_alpha(str[right])){
+            right--;
+        }
+        if(is_alpha(str[left]) or is_alpha(str[right])){
+            is_letter_enconter = true;
+        }
+        if(left < right){
+            if(to_lower(str[left]) != to_lower(str[right])){
+                return false;
+            }
+            left++;
+            right++;
+        }
+    }
+    return is_letter_enconter;
 }
