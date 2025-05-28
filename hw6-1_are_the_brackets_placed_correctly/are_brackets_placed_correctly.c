@@ -36,10 +36,7 @@ bool are_brackets_placed_correctly(const char *str){
         }
     }
     if(0 != n){
-        printf("false\n");
         return false;
     }
-    printf("true\n");
     return true;
-
 }
