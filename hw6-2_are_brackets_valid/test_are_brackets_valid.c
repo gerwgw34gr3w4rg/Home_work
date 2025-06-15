@@ -2,13 +2,15 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 
 #include "are_brackets_valid.c"
 
 
 int main(){
-    const char *str[] = {
+    // test true
+    const char *str_true[] = {
         "wks98iughj(){}<>wqe3", // true
         "iuedy87iu()(ywjhn<222{[eeee]}>)", // true
         "09({[<..>]})", // true
@@ -21,7 +23,7 @@ int main(){
         "rth54", // true
         "( we4387)", // true
         "<w34rgw3>", // true
-        "{w343w4}", // true
+        "{w343\nw4}", // true
         "[0]", // true
         "1", // true
         "                          ", // true
@@ -29,7 +31,10 @@ int main(){
         "=-=-=_++", // true
         "#$%%^&*()", // true
         "nm,cccsd", // true
+    };
 
+    // test false
+    const char *str_false[] = {
         ")", // false
         "}", // false
         "]", // false
@@ -51,11 +56,26 @@ int main(){
         "[", // false
         "{", // false
         "546789-0,<", // false
+        "({)}", // false
+        "<(>)", // false
     };
 
-    for(unsigned int i = 0; i < sizeof(str) / sizeof(str[0]); i++){
-        are_brackets_valid(str[i]);
+    // check test true
+    for(unsigned int i = 0; i < sizeof(str_true) / sizeof(str_true[0]); i++){
+        if(are_brackets_valid(str_true[i]) != true){
+            fprintf(stderr, "Error %s = false, line = %d", str_true[i], __LINE__ - 1); 
+            abort();
+        }
     }
+    // check test false
+    for(unsigned int i = 0; i < sizeof(str_false) / sizeof(str_false[0]); i++){
+        if(are_brackets_valid(str_false[i]) != false){
+            fprintf(stderr, "Error %s = true, line = %d", str_false[i], __LINE__ - 1); 
+            abort();
+        }
+    }
+
     printf("All tests passed successfully\n");
+    getchar();
     return 0;
 }
