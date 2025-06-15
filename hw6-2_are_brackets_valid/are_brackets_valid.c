@@ -53,6 +53,7 @@ bool are_brackets_valid(const char *str){
             do{
                 j--;
                 if(j > i or str1[j] == '{' or str1[j] == '<' or str1[j] == '['){
+                    free(str1);
                     return false;
                 }
             } while(str1[j] != '(');
@@ -65,6 +66,7 @@ bool are_brackets_valid(const char *str){
             do{
                 j--;
                 if(j > i or str1[j] == '(' or str1[j] == '<' or str1[j] == '['){
+                    free(str1);
                     return false;
                 }
             } while(str1[j] != '{');
@@ -77,6 +79,7 @@ bool are_brackets_valid(const char *str){
             do{
                 j--;
                 if(j > i or str1[j] == '(' or str1[j] == '{' or str1[j] == '['){
+                    free(str1);
                     return false;
                 }
             } while(str1[j] != '<');
@@ -89,6 +92,7 @@ bool are_brackets_valid(const char *str){
             do{
                 j--;
                 if(j > i or str1[j] == '(' or str1[j] == '{' or str1[j] == '<'){
+                    free(str1);
                     return false;
                 }
             } while(str1[j] != '[');
@@ -97,6 +101,7 @@ bool are_brackets_valid(const char *str){
         }
     }
     if(counter != 0){
+    free(str1);
     return false;
     }
     free(str1);
