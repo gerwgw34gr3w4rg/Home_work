@@ -1,81 +1,121 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iso646.h>
+#include <stdbool.h>
 
 
-void filling_an_array(char *line, const int MAX_LINE);
-void checks_the_number_of_characters_entered_and_downs_the_case_of_characters(char *line, const int MAX_LINE, char *line_1, char *line_2);
-void clearing_memory_occupied_by_malloc_and_emergency_program_termination(char *line_1, char *line_2);
-void search_for_the_second_string_in_the_first(char *line_1, char *line_2);
-
+bool check_NULL(bool check);
+void clear_malloc(char *pointer);
+bool check_limit_line(char *line, unsigned int max_size);
 
 int main(){
-    const int MAX_LINE = 100; // максимальное разрешённое (за один ввод/раз) колличество символов для ввода
-    char *line_1 = (char *)malloc((2 + MAX_LINE) * sizeof(char)); // 2 + это для того чтобы там хранились \n \0
-    char *line_2 = (char *)malloc((2 + MAX_LINE) * sizeof(char)); // 2 + это для того чтобы там хранились \n \0
-    if(NULL == line_1 or NULL == line_2){ // проверка, выделил ли память malloc
-        printf("malloc memory allocation error"); // сообщаем пользователю что функция malloc не выделила память, сообщить об ошибке вышестоящим
-        clearing_memory_occupied_by_malloc_and_emergency_program_termination(line_1, line_2); // вызываю функцию которая освобождает память и экстренно завершает программу
-    }
-    printf("The program checks two lines with a range of no more than %d"
-            "characters (the height of the letters is not taken into account),"
-            "if the second line is completely contained in the first, then the"
-            "index of the place where the second line begins in the first line"
-            "is displayed, otherwise -1 is displayed.\n\n", MAX_LINE);
-    filling_an_array(line_1, MAX_LINE); // вызов функции для заполнения массива
-    checks_the_number_of_characters_entered_and_downs_the_case_of_characters(line_1, MAX_LINE, line_1, line_2); // вызов функции которая проверяет количество введенных символов и понижает регистр символов
-    filling_an_array(line_2, MAX_LINE); // вызов функции для заполнения массива
-    checks_the_number_of_characters_entered_and_downs_the_case_of_characters(line_2, MAX_LINE, line_1, line_2); // вызов функции которая проверяет количество введенных символов и понижает регистр символов
+    const unsigned int MAX = 100;
+    int number_start = -1;
+    fprintf(stderr, "The program checks two lines with a range of no more than %u characters"
+            " (the height of the letters is not taken into account),"
+            " if the second line is completely contained in the first,"
+            " then the index of the place where the second line begins in"
+            " the first line is displayed, otherwise %d is displayed\n\n", MAX, number_start);
     
-    search_for_the_second_string_in_the_first(line_1, line_2); // вызов функции которая будет искать вторую строку в первой без учёта регистров
-    
-    for(int i = 0; line_1[i] != '\n'; i++){
-        printf("[%d]%c ", i, line_1[i]);
+    char *line_1 = (char *)malloc(sizeof(char) * (MAX + 2));
+    if(check_NULL(line_1) == line_1){
+        fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
     }
+    fprintf(stderr, "Enter different characters (up to %u)\n", MAX);
+    if(NULL == check_NULL(fgets(line_1, MAX + 2, stdin))){
+        clear_malloc(line_1);
+        fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
+    }
+    if(false == check_limit_line(line_1, MAX + 2)){
+        clear_malloc(line_1);
+        fprintf(stderr, "Error - you enter more than %u characters\n", MAX);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
+    }
+
+
+    char *line_2 = (char *)malloc(sizeof(char) * (MAX + 2));
+    if(check_NULL(line_2) == line_2){
+        clear_malloc(line_1);
+        fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
+    }
+    fprintf(stderr, "Enter different characters (up to %u) this will be the next line\n", MAX);
+    if(NULL == check_NULL(fgets(line_2, MAX + 2, stdin))){
+        clear_malloc(line_1);
+        clear_malloc(line_2);
+        fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
+    }
+    if(false == check_limit_line(line_2, MAX + 2)){
+        clear_malloc(line_1);
+        clear_malloc(line_2);
+        fprintf(stderr, "Error - you enter more than %u characters\n", MAX);
+        fprintf(stderr, "To close the program, press enter\n");
+        getchar();
+        abort();
+    }
+
+    number_start = -1;
+    for(unsigned int i = 0, j = 0; line_1[i] != '\0' or line_2[j] == '\0'; i++){
+        if(line_1[i] == line_2[j]){
+            j++;
+            if(-1 == number_start){
+                number_start = i;
+            }
+            if('\n' == line_2[j]){
+                if('\0' == line_2[j + 1]){
+                    break;
+                }
+            }
+        }
+        else{
+            if(-1 != number_start){
+                i = number_start;
+                number_start = -1;
+                j = 0;
+            }
+        }
+    }
+
+
+    printf("%d\n", number_start);
+    clear_malloc(line_1);
+    clear_malloc(line_2);
+    getchar();
     return 0;
 }
 
 
-void filling_an_array(char *line, const int MAX_LINE){
-    printf("Enter characters, no more than %d\n", MAX_LINE);
-    fgets(line, MAX_LINE + 2, stdin); // + 2 нужно записать \n \0
-}
-
-void checks_the_number_of_characters_entered_and_downs_the_case_of_characters(char *line, const int MAX_LINE, char *line_1, char *line_2){
-    for(unsigned i = 0; ; i++){
-        if(line[i] >= 'A' and line[i] <= 'Z'){ // проверка на большие символы
-            line[i] = line[i] + 'a' - 'A'; // если большой символ найден то он станет маленьким
-        }
-        if('\n' == line[i]){ // проверка на конец строки
-            break; // выход из цикла
-        }
-        if('\0' == line[i]){ // проверка на колличество введённых символов
-            printf("more than %d characters were entered", MAX_LINE); // сообщение пользователю о избыточном вводе символов
-            clearing_memory_occupied_by_malloc_and_emergency_program_termination(line_1, line_2); // вызываю функцию которая освобождает память и экстренно завершает программу
-        }
+bool check_NULL(bool check){
+    if(0 == check){
+        return 0;
     }
+    return 1;
 }
 
-void clearing_memory_occupied_by_malloc_and_emergency_program_termination(char *line_1, char *line_2){
-    free(line_1); // возвращаем занятую память системе
-    free(line_2); // возвращаем занятую память системе
-    abort(); // экстренно завершаю программу
+void clear_malloc(char *pointer){
+    free(pointer);
 }
 
-void search_for_the_second_string_in_the_first(char *line_1, char *line_2){ // функция ищет вторую строку в первой, регистры не учитываются
-    for(unsigned i = 0, j = 0; line_1[i] != '\n' and line_2[j] != '\n';){
-        if(line_1[i] == line_2[j]){
-            j++;
-            if(line_2[j] == '\n'){
-                printf("%d\n", i - j + 1);
-                return;
-            }
-        }
-        else if(0 != j){
-            i--;
-            j = 0;
-        }
-        i++;
+bool check_limit_line(char *line, unsigned int max_size){
+    max_size = max_size - 1;
+    if(line[0] == '\0'){
+        return true;
     }
-    printf("-1\n");
+    else if(line[max_size] == '\0' and line[max_size - 1] != '\n'){
+        return false;
+    }
+    return true;
 }
