@@ -7,6 +7,7 @@
 bool check_NULL(bool check);
 void clear_malloc(char *pointer);
 bool check_limit_line(char *line, unsigned int max_size);
+void down_registers(char *line);
 
 int main(){
     const unsigned int MAX = 100;
@@ -32,6 +33,7 @@ int main(){
         getchar();
         abort();
     }
+    down_registers(line_1);
     if(false == check_limit_line(line_1, MAX + 2)){
         clear_malloc(line_1);
         fprintf(stderr, "Error - you enter more than %u characters\n", MAX);
@@ -58,6 +60,7 @@ int main(){
         getchar();
         abort();
     }
+    down_registers(line_2);
     if(false == check_limit_line(line_2, MAX + 2)){
         clear_malloc(line_1);
         clear_malloc(line_2);
@@ -118,4 +121,13 @@ bool check_limit_line(char *line, unsigned int max_size){
         return false;
     }
     return true;
+}
+
+
+void down_registers(char *line){
+    for(unsigned int i = 0; line[i] != '\0'; i++){
+        if(line[i] >= 'A' and line[i] <= 'Z'){
+            line[i] = line[i] + 32;
+        }
+    }
 }
