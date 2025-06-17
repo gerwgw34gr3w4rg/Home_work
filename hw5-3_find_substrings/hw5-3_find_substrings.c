@@ -4,67 +4,66 @@
 #include <stdbool.h>
 
 
-bool check_NULL(bool check);
-void clear_malloc(char *pointer);
-bool check_limit_line(char *line, unsigned int max_size);
+bool check_limit_line(char *line);
 void down_registers(char *line);
 
+
 int main(){
-    const unsigned int MAX = 100;
+    const unsigned int LIMIT_LINE = 100;
     int number_start = -1;
     fprintf(stderr, "The program checks two lines with a range of no more than %u characters"
             " (the height of the letters is not taken into account),"
             " if the second line is completely contained in the first,"
             " then the index of the place where the second line begins in"
-            " the first line is displayed, otherwise %d is displayed\n\n", MAX, number_start);
+            " the first line is displayed, otherwise %d is displayed\n\n", LIMIT_LINE, number_start);
     
-    char *line_1 = (char *)malloc(sizeof(char) * (MAX + 2));
-    if(check_NULL(line_1) == line_1){
+    char *line_1 = (char *)malloc(sizeof(char) * (LIMIT_LINE + 2));
+    if(NULL == line_1){
         fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
     }
-    fprintf(stderr, "Enter different characters (up to %u)\n", MAX);
-    if(NULL == check_NULL(fgets(line_1, MAX + 2, stdin))){
-        clear_malloc(line_1);
+    fprintf(stderr, "Enter different characters (up to %u)\n", LIMIT_LINE);
+    if(NULL == fgets(line_1, LIMIT_LINE + 2, stdin)){
+        free(line_1);
         fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
     }
     down_registers(line_1);
-    if(false == check_limit_line(line_1, MAX + 2)){
-        clear_malloc(line_1);
-        fprintf(stderr, "Error - you enter more than %u characters\n", MAX);
+    if(false == check_limit_line(line_1)){
+        free(line_1);
+        fprintf(stderr, "Error - you enter more than %u characters\n", LIMIT_LINE);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
     }
 
 
-    char *line_2 = (char *)malloc(sizeof(char) * (MAX + 2));
-    if(check_NULL(line_2) == line_2){
-        clear_malloc(line_1);
+    char *line_2 = (char *)malloc(sizeof(char) * (LIMIT_LINE + 2));
+    if(NULL == line_2){
+        free(line_1);
         fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
     }
-    fprintf(stderr, "Enter different characters (up to %u) this will be the next line\n", MAX);
-    if(NULL == check_NULL(fgets(line_2, MAX + 2, stdin))){
-        clear_malloc(line_1);
-        clear_malloc(line_2);
+    fprintf(stderr, "Enter different characters (up to %u) this will be the next line\n", LIMIT_LINE);
+    if(NULL == fgets(line_2, LIMIT_LINE + 2, stdin)){
+        free(line_1);
+        free(line_2);
         fprintf(stderr, "Error, Line %d, pointer is NULL\n", __LINE__ - 1);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
     }
     down_registers(line_2);
-    if(false == check_limit_line(line_2, MAX + 2)){
-        clear_malloc(line_1);
-        clear_malloc(line_2);
-        fprintf(stderr, "Error - you enter more than %u characters\n", MAX);
+    if(false == check_limit_line(line_2)){
+        free(line_1);
+        free(line_2);
+        fprintf(stderr, "Error - you enter more than %u characters\n", LIMIT_LINE);
         fprintf(stderr, "To close the program, press enter\n");
         getchar();
         abort();
@@ -94,39 +93,28 @@ int main(){
 
 
     printf("%d\n", number_start);
-    clear_malloc(line_1);
-    clear_malloc(line_2);
+    free(line_1);
+    free(line_2);
     getchar();
     return 0;
 }
 
 
-bool check_NULL(bool check){
-    if(0 == check){
-        return 0;
+bool check_limit_line(char *line){
+    for(unsigned int i = 0;; i++){
+        if(line[i] == '\0'){
+            if(line[i - 1] == '\n'){
+                return true;
+            }
+            break;
+        }
     }
-    return 1;
+    return false;
 }
-
-void clear_malloc(char *pointer){
-    free(pointer);
-}
-
-bool check_limit_line(char *line, unsigned int max_size){
-    max_size = max_size - 1;
-    if(line[0] == '\0'){
-        return true;
-    }
-    else if(line[max_size] == '\0' and line[max_size - 1] != '\n'){
-        return false;
-    }
-    return true;
-}
-
 
 void down_registers(char *line){
     for(unsigned int i = 0; line[i] != '\0'; i++){
-        if(line[i] >= 'A' and line[i] <= 'Z'){
+        if(line[i] >= 'A' and line[i] <= 'Z' or line[i] >= 'А' and line[i] <= 'Я'){
             line[i] = line[i] + 32;
         }
     }
