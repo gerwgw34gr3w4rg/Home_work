@@ -80,7 +80,7 @@ ssize_t find_substring(const char *text, const char *pattern){
         arr[i] = time_box;
     }
 
-    for(size_t i = 0; i < time_box - 1; i++){
+    for(size_t i = 0; i < time_box; i++){
         arr[pattern[i]] = time_box - 1 - i;
 
     }
