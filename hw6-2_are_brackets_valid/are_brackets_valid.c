@@ -1,109 +1,84 @@
-/*
-The function checks for correct placement of: ( ), { }, < >, [ ].
-Other characters are ignored.
-*/
-
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <iso646.h>
 #include <stdlib.h>
 
+#include "scan_line_size(and_backslash_0).c"
+const char *filename = "are_brackets_valid.c";
 
-bool are_brackets_valid(const char *str){
+
+bool true_(char *open_brackets);
+bool false_(char *open_brackets);
+
+
+//int are_brackets_valid(const char *str, bool *are_valid){
+char are_brackets_valid(const char *str){
+    /*
+    The function checks the correctness of the placement: ( ), { }, < >, [ ].
+    Other symbols are ignored.
+    */
     if(NULL == str){
-        fprintf(stderr, "str == NULL");
-        abort();
+        fprintf(stderr, "\nError - pointer = NULL\nName file - %s\nLine = %d\n\n"
+                        "Press enter to continue executing the program\n", filename, __LINE__ - 2);
+        getchar();
+        return false;
     }
-    unsigned int size_str = 0;
-    for(; str[size_str] != '\0'; size_str++){
+    size_t size_str = scan_line_size(str);
+    size_t open_brackets_size = size_str / 2;
+    char *open_brackets = (char *)malloc(sizeof(char) * (open_brackets_size));
+    if(NULL == open_brackets){
+        fprintf(stderr, "\nError - pointer = NULL\nName file - %s\nLine = %d\n\n"
+                        "Press enter to continue executing the program\n", filename, __LINE__ - 2);
+        getchar();
+        return false;
+    }
 
+    for(size_t i = 0, j = 0; ; i++){  // scan ( ), { }, < >, [ ]
+        if('\0' == str[i]){
+            if(0 != j){
+                false_(open_brackets);
+                break;
+            }
+            true_(open_brackets);
+            break;
+        }
+        else if(str[i] == '(' or str[i] == '{' or str[i] == '<' or str[i] == '['){
+            if(j == open_brackets_size){
+                false_(open_brackets);
+                break;
+            }
+            if(str[i] == '('){
+                open_brackets[j] = str[i] + 1;
+                j++;
+            }
+            else{
+                open_brackets[j] = str[i] + 2;
+                j++;
+            }
+        }
+        else if(str[i] == ')' or str[i] == '}' or str[i] == '>' or str[i] == ']'){
+            j--;
+            if(i < j){
+                false_(open_brackets);
+                break;
+            }
+            if(str[i] != open_brackets[j]){
+                false_(open_brackets);
+                break;
+            }
+            open_brackets[j] = '0';
+        }
     }
-    char *str1 = (char *)malloc(sizeof(char) * (size_str + 1));
-    if(NULL == str1){
-        fprintf(stderr, "str1 == NULL");
-        abort();
-    }
+}
 
-    for(unsigned int i = 0; str[i] != '\0'; i++){
-        str1[i] = str[i];
-    }
-    str1[size_str] = '\0';
 
-
-    unsigned int j;
-    int counter = 0;
-    for(unsigned i = 0; str1[i] != '\0'; i++){
-        // ( ), { }, < >, [ ]
-        if(str1[i] == '('){
-            counter++;
-        }
-        else if(str[i] == '{'){
-            counter++;
-        }
-        else if(str[i] == '<'){
-            counter++;
-        }
-        else if(str[i] == '['){
-            counter++;
-        }
-        else if(str1[i] == ')'){
-            counter--;
-            j = i;
-            do{
-                j--;
-                if(j > i or str1[j] == '{' or str1[j] == '<' or str1[j] == '['){
-                    free(str1);
-                    return false;
-                }
-            } while(str1[j] != '(');
-            str1[i] = '0';
-            str1[j] = '0';
-        }
-        else if(str1[i] == '}'){
-            counter--;
-            j = i;
-            do{
-                j--;
-                if(j > i or str1[j] == '(' or str1[j] == '<' or str1[j] == '['){
-                    free(str1);
-                    return false;
-                }
-            } while(str1[j] != '{');
-            str1[i] = '0';
-            str1[j] = '0';
-        }
-        else if(str1[i] == '>'){
-            counter--;
-            j = i;
-            do{
-                j--;
-                if(j > i or str1[j] == '(' or str1[j] == '{' or str1[j] == '['){
-                    free(str1);
-                    return false;
-                }
-            } while(str1[j] != '<');
-            str1[i] = '0';
-            str1[j] = '0';
-        }
-        else if(str1[i] == ']'){
-            counter--;
-            j = i;
-            do{
-                j--;
-                if(j > i or str1[j] == '(' or str1[j] == '{' or str1[j] == '<'){
-                    free(str1);
-                    return false;
-                }
-            } while(str1[j] != '[');
-            str1[i] = '0';
-            str1[j] = '0';
-        }
-    }
-    if(counter != 0){
-    free(str1);
-    return false;
-    }
-    free(str1);
+bool true_(char *open_brackets){
+    free(open_brackets);
     return true;
 }
+
+bool false_(char *open_brackets){
+    free(open_brackets);
+    return false;
+}
+

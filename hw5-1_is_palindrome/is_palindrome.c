@@ -43,7 +43,7 @@ size_t str_size(const char *str){
 
 
 char to_lower(char ch){
-	/**
+	/*
 	* @brief Converts an uppercase ASCII letter to its lowercase equivalent.
 	*
 	* This function takes a single character as input and returns its lowercase form

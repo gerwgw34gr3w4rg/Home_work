@@ -61,21 +61,21 @@ int main(){
     };
 
     // check test true
-    for(unsigned int i = 0; i < sizeof(str_true) / sizeof(str_true[0]); i++){
+    for(size_t i = 0; i < sizeof(str_true) / sizeof(str_true[0]); i++){
         if(are_brackets_valid(str_true[i]) != true){
             fprintf(stderr, "Error %s = false, line = %d", str_true[i], __LINE__ - 1); 
             abort();
         }
     }
     // check test false
-    for(unsigned int i = 0; i < sizeof(str_false) / sizeof(str_false[0]); i++){
+    for(size_t i = 0; i < sizeof(str_false) / sizeof(str_false[0]); i++){
         if(are_brackets_valid(str_false[i]) != false){
             fprintf(stderr, "Error %s = true, line = %d", str_false[i], __LINE__ - 1); 
             abort();
         }
     }
 
-    printf("All tests passed successfully\n");
+    printf("All tests passed successfully\nPress enter to terminate the program\n");
     getchar();
     return 0;
 }
